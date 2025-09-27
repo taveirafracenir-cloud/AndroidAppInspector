@@ -1,13 +1,11 @@
-package com.androidappinspector 
+package com.androidappinspector
 
-import android.content.pm.ApplicationInfo
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.yourcompany.androidappinspector.AppInfo // Mude para o nome do seu pacote
-import com.yourcompany.androidappinspector.AppListAdapter // Mude para o nome do seu pacote
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +20,17 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         appList = getInstalledApps()
-        val adapter = AppListAdapter(appList)
+
+        // Passa a ação de clique para o adaptador
+        val adapter = AppListAdapter(appList) { appInfo ->
+            // Cria um Intent para iniciar a AppDetailsActivity
+            val intent = Intent(this, AppDetailsActivity::class.java).apply {
+                putExtra("APP_NAME", appInfo.appName)
+                putExtra("APP_PACKAGE", appInfo.packageName)
+                putStringArrayListExtra("APP_PERMISSIONS", ArrayList(appInfo.permissions))
+            }
+            startActivity(intent)
+        }
         recyclerView.adapter = adapter
     }
 
@@ -40,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
             apps.add(AppInfo(appName, packageName, icon, permissions))
         }
-
         return apps.sortedBy { it.appName.lowercase() }
     }
 }
