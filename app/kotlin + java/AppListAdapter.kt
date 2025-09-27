@@ -5,7 +5,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class AppListAdapter(private val appList: List<AppInfo>) :
+// Ação de clique foi adicionada aqui
+class AppListAdapter(private val appList: List<AppInfo>, private val onItemClick: (AppInfo) -> Unit) :
     RecyclerView.Adapter<AppListAdapter.AppViewHolder>() {
 
     class AppViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -24,7 +25,12 @@ class AppListAdapter(private val appList: List<AppInfo>) :
         val appInfo = appList[position]
         holder.appIcon.setImageDrawable(appInfo.icon)
         holder.appName.text = appInfo.appName
-        holder.appPackage.text = appInfo.packageName
+        holder.appPackage.text = appInfo.appPackage
+
+        // Aqui está a nova lógica de clique
+        holder.itemView.setOnClickListener {
+            onItemClick(appInfo)
+        }
     }
 
     override fun getItemCount() = appList.size
